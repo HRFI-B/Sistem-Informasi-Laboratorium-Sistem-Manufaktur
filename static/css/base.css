@@ -1,0 +1,47 @@
+/* html{
+    min-height: 100%;
+        margin: 0;
+} */
+
+body {
+    background-color: #F2F2F2;
+}
+
+.main-navbar-text{
+    color: white;
+}
+
+.bg-red{
+    background-color: #C1392B;
+}
+
+#menu li a{
+    color: white;
+}
+
+.nav-link span{
+    font-size: small;
+}
+
+.nav-b:hover, .nav-b:focus{
+ background-color: #343a40;
+}
+
+.col-md-13, .col-xl-13{
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+.col-md-3 {
+    -ms-flex: 0 0 26%;
+    flex: 0 0 26%;
+    max-width: 26%;
+  }
+
+.col-xl-13{
+    -ms-flex: 0 0 20%;
+    flex: 0 0 20%;
+    max-width: 20%;
+}

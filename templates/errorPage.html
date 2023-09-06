@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{ error }}</title>
+	<style>
+		body {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			height: 100vh;
+			margin: 0;
+		}
+		h1 {
+			text-shadow: 2px 2px 4px #000000;
+			color: white;
+			font-size: 4em;
+			text-align: center;
+		}
+	</style>
+    <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" crossorigin="anonymous">
+</head>
+<body>
+	<h1>{{ error }}</h1>
+</body>
+</html>

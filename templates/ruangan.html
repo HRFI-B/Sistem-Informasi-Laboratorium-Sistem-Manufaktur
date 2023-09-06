@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+<html lang="en">
+<head>
+    {% block head %}
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- <link rel="stylesheet" href="../static/css/style.css"> -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+        <script src="{{ url_for('static', filename='js/auditLogUpdater.js') }}"></script>
+        <title>{% block title %}Daftar Area Ruangan Praktikum{% endblock %}</title>
+    {% endblock %}
+</head>
+<body>
+    {% block body %}
+    
+    <script>ruangan_active()</script>
+    <link href="https://unpkg.com/bootstrap-table@1.21.2/dist/bootstrap-table.min.css" rel="stylesheet">
+        <style>
+        .btn-secondary {
+  color: #fff;
+  background-color: #C1392B;
+  border-color: #C1392B;
+}
+
+.btn-secondary:hover {
+  color: #fff;
+  background-color: #9e2f23;
+  border-color: #9e2f23;
+}
+
+.btn-secondary:focus, .btn-secondary.focus {
+  color: #fff;
+  background-color: #9e2f23;
+  border-color: #9e2f23;
+  box-shadow: 0 0 0 0.2rem rgba(130, 138, 145, 0.5);
+}
+
+.btn-secondary.disabled, .btn-secondary:disabled {
+  color: #fff;
+  background-color: #C1392B;
+  border-color: #C1392B;
+}
+
+.btn-secondary:not(:disabled):not(.disabled):active, .btn-secondary:not(:disabled):not(.disabled).active,
+.show > .btn-secondary.dropdown-toggle {
+  color: #fff;
+  background-color: #9e2f23;
+  border-color: #641d15;
+}
+
+.btn-secondary:not(:disabled):not(.disabled):active:focus, .btn-secondary:not(:disabled):not(.disabled).active:focus,
+.show > .btn-secondary.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(130, 138, 145, 0.5);
+}
+    </style>
+    <h1>Daftar Area Ruangan Praktikum</h1>
+    <br>
+    <div class="card">
+        <div class="card-body small">
+          <div id="toolbar">
+            <a class="btn btn-danger" href="{{ url_for('add_ruangan')}}">
+              <i class="fs-5 bi-plus"></i>Tambah Ruangan
+            </a>
+          </div >
+          <table class="table-striped table-responsive-sm small"
+          data-toggle="table"
+          data-search="true"
+          data-show-columns="true"
+          data-pagination="true"
+          data-toolbar="#toolbar">
+        <thead>
+          <tr class="tr-class-1">
+            <!-- <th data-field="name" rowspan="2" data-valign="middle">Name</th>
+            <th colspan="3">Detail</th> -->
+            <th scope="col" data-field="no">No</th>
+            <th scope="col" data-field="nama_area">Nama Area</th>
+            <th scope="col" data-field="id_ruangan">ID Ruangan</th>
+            <th scope="col" data-field="lokasi">Lokasi</th>
+            <th scope="col" data-field="status">Status Peminjaman</th>
+            <th scope="col" data-field="aksi">Aksi</th>
+          </tr>
+        </thead>
+        <div id="log-table">
+          <tbody>
+            {% if rooms != "Not Found" %}
+              {% for room in rooms %}
+                <tr id="tr-id-1" class="tr-class-1">
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ room.nama }}</td>
+                    <td>{{ room.id_ruangan }}</td>
+                    <td>{{ room.lokasi }}</td>
+                    <td> 
+                      {% if room.status_peminjaman == "Available" %}
+                        <label class="btn btn-sm" style="background-color: #5D9C59; color: #FFFFFF">
+                        {{ room.status_peminjaman }}
+                        </label>
+                      {% else %}
+                        <label class="btn btn-sm" style="background-color: #DF2E38; color: #FFFFFF">
+                        {{ room.status_peminjaman }}
+                        </label>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <a class="btn btn-primary btn-sm"  href="{{ url_for('edit_ruangan',id_ruangan=room.id_ruangan)}}">
+                          <i class="fs-6 bi-pencil"></i>
+                      </a>
+                      <a class="btn btn-danger btn-sm" id="delete" href="{{ url_for('delete_ruangan',id_ruangan=room.id_ruangan)}}">
+                          <i class="fs-6 bi-trash"></i>
+                      </a>
+                    </td>
+                </tr>
+                {% endfor%}
+              {% else %}
+                <tr>
+                  <td colspan="11">Tidak ada data</td>
+                </tr>
+              {% endif %}
+          </tbody>
+        </div>
+        
+      </table>
+            <!-- <table class="table table-striped text-center">
+                <thead class="table-dark ">
+                    <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">Aktifitas</th>
+                    <th scope="col">Data ID</th>
+                    <th scope="col">Attribut Terubah</th>
+                    <th scope="col">Nilai Lama</th>
+                    <th scope="col">Nilai Baru</th>
+                    <th scope="col">Deskripsi</th>
+                    <th scope="col">Timestamp</th>
+                    <th scope="col">User ID</th>
+                    <th scope="col">Nama Pengguna</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                        <tr>
+                            <th scope="row">{{ loop.index }}</th>
+                            <td>{{ log.activity }}</td>
+                            <td>{{ log.data_id }}</td>
+                            <td>{{ log.changed_attribute }}</td>
+                            <td>{{ log.old_value }}</td>
+                            <td>{{ log.new_value }}</td>
+                            <td>{{ log.description }}</td>
+                            <td>{{ log.timestamp }}</td>
+                            <td>{{ log.user_id }}</td>
+                            <td>{{ log.name }}</td>
+                        </tr>
+                    {% endfor%}
+                </tbody>
+                </table> -->
+        </div>
+        
+    </div>
+    <script src="https://unpkg.com/bootstrap-table@1.21.2/dist/bootstrap-table.min.js"></script>
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+<html lang="en">
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Tambah Ruangan Praktikum{% endblock %}</title>
+    {% endblock %}
+</head>
+<body>
+    {% block body %}
+    <section>
+        <h1>Ruangan Praktikum Baru</h1>
+      <br>
+          <div class="row">
+            <div class="col-lg-12">
+                <form action="/add_ruangan" method="POST">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <a href="/ruangan" class="d-flex flex-row align-items-center back link-secondary">
+                                    <i class="bx bx-arrow-back mr-2 mb-2"></i>
+                                    <h6>Kembali</h6>
+                                </a>
+                            </div>
+                            
+                            <div><h4>Data Ruangan Baru</h4><hr></div>
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <label for="Nama">Nama Ruangan</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" placeholder="Masukkan Nama Ruangan" id="Nama" name="nama" required>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <label for="id_ruangan">ID Ruangan</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" placeholder="Masukkan ID Ruangan" id="id_ruangan" name="id_ruangan" required>
+                                    <small class="form-text text-danger">{{ msg }}</small>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-sm-3">
+                                    <label for="Lokasi">Lokasi</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" placeholder="Masukkan Lokasi Ruangan" id="Lokasi" name="lokasi" required>
+                                </div>
+                            </div>
+                
+                            <div class="d-flex justify-content-end mb-2 mt-3">
+                                <button class="btn btn-primary profile-button" type="submit">Simpan</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+          </div>
+      </section>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous">
+    </script>
+    {% endblock %}
+</body>
+</html>
