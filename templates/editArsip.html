@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+<html lang="en">
+<head>
+    {% block head %}
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} Edit Data Arsip - {{ archive['id_arsip'] }} {% endblock %}</title>
+    {% endblock %}
+</head>
+<body>
+    {% block body %}
+    <section>
+        <h1>Edit Data Arsip</h1>
+      <br>
+      <form action="{{ url_for('edit_arsip',id_arsip=archive.id_arsip)}}" method="post">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="card mb-4">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                      <a href="#" class="d-flex flex-row align-items-center back link-secondary">
+                          <i class="bx bx-arrow-back mr-2 mb-2"></i>
+                          <h6>Kembali</h6>
+                      </a>
+                  </div>
+                  <div>
+                    <h5>Data Arsip</h5>
+                    <hr>
+                  </div>
+                  
+                    <div class="form-group mb-3">
+                        <label for="id_arsip">ID arsip</label>
+                        <input type="text" class="form-control" placeholder="{{ archive.id_arsip }}" value="{{ archive.id_arsip }}"  id="id_arsip" name="id_arsip" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                      <label for="topik_arsip">Topik arsip</label>
+                      <input type="text" class="form-control" placeholder="{{ archive.topik_arsip }}" value="{{ archive.topik_arsip }}" id="topik_arsip" name="topik_arsip" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                      <label for="tanggal_arsip">Penulis Arsip</label>
+                      <input type="text" class="form-control" placeholder="{{ archive.penulis_arsip }}" value="{{ archive.penulis_arsip }}" id="penulis_arsip" name="penulis_arsip" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                      <label for="tanggal_arsip">Tanggal Arsip</label>
+                      <input type="date" class="form-control" value="{{ archive.tanggal_arsip }}" id="tanggal_arsip" name="tanggal_arsip" required>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mb-2 mt-3">
+                      <button class="btn btn-primary profile-button" type="submit" id="data_submit">Simpan</button>
+                    </div>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </form>
+      </section>
+    
+    {% endblock %}
+    {% block script %}
+    <script src="{{ url_for('static', filename='js/editUser.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+            crossorigin="anonymous">
+        </script>
+    {% endblock %}
+</body>
+</html>

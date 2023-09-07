@@ -62,8 +62,8 @@
     <div class="card">
         <div class="card-body small">
           <div id="toolbar">
-            <a class="btn btn-danger" href="{{ url_for('add_user')}}">
-              <i class="fs-5 bi-plus"></i>Tambah User
+            <a class="btn btn-danger" href="{{ url_for('add_arsip')}}">
+              <i class="fs-5 bi-plus"></i>Tambah Arsip
             </a>
           </div >
           <table class="table-striped table-responsive-sm small"
@@ -81,22 +81,35 @@
             <th scope="col" data-field="id_arsip">ID Arsip</th>
             <th scope="col" data-field="publikasi">Tanggal Publikasi</th>
             <th scope="col" data-field="penulis">Penulis</th>
-            <th scope="col" data-field="status">Status</th>
+            <th scope="col" data-field="status">Status Peminjaman</th>
             <th scope="col" data-field="aksi">Aksi</th>
           </tr>
         </thead>
         <div id="log-table">
           <tbody>
-            {% if rooms != "Not Found" %}
-              {% for room in rooms %}
+            {% if archives != "Not Found" %}
+              {% for archive in archives %}
                 <tr id="tr-id-1" class="tr-class-1">
                     <th scope="row">{{ loop.index }}</th>
-                    <td>{{ room.topik_arsip }}</td>
-                    <td>{{ room.id_arsip }}</td>
-                    <td>{{ room.tanggal_arsip }}</td>
-                    <td>{{ room.penulis }}</td>
-                    <td>{{ room.status_peminjaman }}</td>
-                    <td>{{ room.aksi }}</td>
+                    <td>{{ archive.topik_arsip }}</td>
+                    <td>{{ archive.id_arsip }}</td>
+                    <td>{{ archive.tanggal_arsip }}</td>
+                    <td>{{ archive.penulis_arsip }}</td>
+                    <td>{% if archive.status_peminjaman == "Available" %}
+                      <label class="btn btn-sm" style="background-color: #5D9C59; color: #FFFFFF">
+                      {{ archive.status_peminjaman }}
+                      </label>
+                    {% else %}
+                      <label class="btn btn-sm" style="background-color: #DF2E38; color: #FFFFFF">
+                      {{ archive.status_peminjaman }}
+                      </label>
+                    {% endif %}</td>
+                    <td><a class="btn btn-primary btn-sm"  href="{{ url_for('edit_arsip',id_arsip=archive.id_arsip)}}">
+                      <i class="fs-6 bi-pencil"></i>
+                  </a>
+                  <a class="btn btn-danger btn-sm" id="delete" href="{{ url_for('delete_arsip',id_arsip=archive.id_arsip)}}">
+                      <i class="fs-6 bi-trash"></i>
+                  </a></td>
                 </tr>
                 {% endfor%}
               {% else %}

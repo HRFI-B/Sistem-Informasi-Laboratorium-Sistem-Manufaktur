@@ -506,10 +506,117 @@ def arsip():
         if session['role'] == 'Admin':
             query = "SELECT * FROM `arsip_ta` ORDER BY `id_arsip` ASC"
             params = None
-            rooms = read_data(query, params)
-            return render_template('arsip.html', rooms=rooms)
+            archives = read_data(query, params)
+            return render_template('arsip.html', archives=archives)
         # return error code 403 if user is not a admin
         return abort(403)
+    return abort(401)
+
+@app.route('/add_arsip/', methods=['GET', 'POST'])
+@app.route('/add_arsip', methods=['GET', 'POST'])
+def add_arsip():
+    if 'user_id' in session:
+        if request.method == 'GET':
+            if session['role'] == 'Admin':
+                return render_template('addArsip.html')
+            # return abort(403)
+
+        elif request.method == 'POST':
+            if session['role'] == 'Admin':
+                query = "SELECT `id_arsip` FROM `arsip_ta`"
+                params = None
+                archives = read_data(query, params, "fetchall")
+                for archive in archives:
+                    if request.form['id_arsip'] in archive['id_arsip']:
+                        return render_template('addArsip.html', msg='Arsip sudah terdaftar')
+                    
+                topik_arsip = request.form['topik_arsip']
+                id_arsip = request.form['id_arsip']
+                tanggal_arsip = request.form['tanggal_arsip']
+                penulis_arsip = request.form['penulis_arsip']
+
+                query = "INSERT INTO `arsip_ta` (`topik_arsip`, `id_arsip`, `tanggal_arsip`, `penulis_arsip`, `status_peminjaman`) VALUES (%s, %s, %s, %s, %s)"
+                params = (topik_arsip, id_arsip, tanggal_arsip, penulis_arsip, "Available")
+                write_data(query, params)
+
+                return redirect(url_for('arsip'))
+            return abort(403)
+        return abort(405)
+    return abort(401)
+
+@app.route('/edit_arsip/<id_arsip>', methods=['GET', 'POST'])
+def edit_arsip(id_arsip):
+    if 'user_id' in session:
+        if request.method == 'GET':
+            if session['role'] == 'Admin':
+                query = "SELECT * FROM `arsip_ta` WHERE `id_arsip` = %s"
+                params = (id_arsip,)
+                archive = read_data(query, params, "fetchone")
+                return render_template('editarsip.html', archive=archive, msg=""),201
+                # return abort(406)
+            return abort(403)
+        
+        elif request.method == 'POST':
+            if session['role'] == 'Admin':
+                editted_archive_id = id_arsip
+                topik_arsip = request.form['topik_arsip']
+                archive_id= request.form.get('id_arsip')
+                penulis_arsip = request.form['penulis_arsip']
+                tanggal_arsip = request.form['tanggal_arsip']
+                query = "SELECT * FROM `arsip_ta` WHERE `id_arsip` = %s"
+                params = (id_arsip,)
+                editted_archive = read_data(query, params, "fetchall")
+                for archive in editted_archive:
+                    if archive['topik_arsip'] != topik_arsip:
+                        query = "UPDATE `arsip_ta` SET `topik_arsip` = %s WHERE `id_arsip` = %s"
+                        params = (topik_arsip, editted_archive_id)
+                        write_data(query, params)
+                                        
+                    if archive['id_arsip'] != archive_id:
+                        query = "SELECT `id_arsip` FROM `arsip_ta` WHERE `id_arsip` = %s"
+                        params = (archive_id,)
+                        existing_archive = read_data(query, params, "fetchone")
+
+                        if not existing_archive == []:
+                            query = "UPDATE `arsip_ta` SET `id_arsip` = %s WHERE `id_arsip` = %s"
+                            params = (archive_id, editted_archive_id)
+                            write_data(query, params)
+
+                        elif not archive_id in existing_archive:
+                            query = "UPDATE `arsip_ta` SET `id_arsip` = %s WHERE `id_arsip` = %s"
+                            params = (archive_id, editted_archive_id)
+                            write_data(query, params)
+                    
+                    if archive['penulis_arsip'] != penulis_arsip:
+                        query = "UPDATE `arsip_ta` SET `penulis_arsip` = %s WHERE `id_arsip` = %s"
+                        params = (penulis_arsip, editted_archive_id)
+                        write_data(query, params)
+
+                    if archive['tanggal_arsip'] != tanggal_arsip:
+                        query = "UPDATE `arsip_ta` SET `tanggal_arsip` = %s WHERE `id_arsip` = %s"
+                        params = (tanggal_arsip, editted_archive_id)
+                        write_data(query, params)
+
+                return redirect(url_for('arsip'))
+            return abort(403)
+        return abort(405)
+    return abort(401)
+
+@app.route('/delete_arsip/<id_arsip>', methods=['GET'])
+def delete_arsip(id_arsip):
+    if 'user_id' in session:
+        if session['role'] == 'Admin':
+            query = "SELECT * FROM `arsip_ta` WHERE `id_arsip` = %s"
+            params = (id_arsip,)
+            to_be_deleted_archive = read_data(query, params, "fetchone")
+            
+            if to_be_deleted_archive:
+                query = "DELETE FROM `arsip_ta` WHERE `id_arsip` = %s"
+                write_data(query, params)
+    
+                return redirect(url_for('arsip'))
+            return abort(406)
+        return abort(403)          
     return abort(401)
 
 # @app.route('/base', methods=['GET'])
