@@ -311,7 +311,7 @@ def add_ruangan():
                 lokasi = request.form['lokasi']
 
                 query = "INSERT INTO `ruang_praktikum` (`nama`, `id_ruangan`, `lokasi`, `status_peminjaman`) VALUES (%s, %s, %s, %s)"
-                params = (nama, id_ruangan, lokasi, "Available")
+                params = (nama, id_ruangan, lokasi, "Tersedia")
                 write_data(query, params)
 
                 return redirect(url_for('ruangan'))
@@ -421,7 +421,7 @@ def add_alat():
                 spesifikasi_alat = request.form['spesifikasi_alat']
 
                 query = "INSERT INTO `alat_praktikum` (`nama`, `id_alat`, `spesifikasi_alat`, `status_peminjaman`) VALUES (%s, %s, %s, %s)"
-                params = (nama, id_alat, spesifikasi_alat, "Available")
+                params = (nama, id_alat, spesifikasi_alat, "Tersedia")
                 write_data(query, params)
 
                 return redirect(url_for('alat'))
@@ -536,7 +536,7 @@ def add_arsip():
                 penulis_arsip = request.form['penulis_arsip']
 
                 query = "INSERT INTO `arsip_ta` (`topik_arsip`, `id_arsip`, `tanggal_arsip`, `penulis_arsip`, `status_peminjaman`) VALUES (%s, %s, %s, %s, %s)"
-                params = (topik_arsip, id_arsip, tanggal_arsip, penulis_arsip, "Available")
+                params = (topik_arsip, id_arsip, tanggal_arsip, penulis_arsip, "Tersedia")
                 write_data(query, params)
 
                 return redirect(url_for('arsip'))
@@ -619,61 +619,6 @@ def delete_arsip(id_arsip):
         return abort(403)          
     return abort(401)
 
-@app.route('/peminjaman/', methods=['GET'])
-@app.route('/peminjaman', methods=['GET'])
-def peminjaman():
-    # mysql = connect_db()
-    if 'user_id' in session:
-        if session['role'] == 'Admin':
-            query = "SELECT peminjaman_ruangan.id_ruangan, peminjaman_ruangan.tanggal_peminjaman, \
-                peminjaman_ruangan.waktu_peminjaman, peminjaman_ruangan.id_peminjam, peminjaman_ruangan.durasi_peminjaman, \
-                ruang_praktikum.nama, ruang_praktikum.lokasi, ruang_praktikum.status_peminjaman \
-                FROM `peminjaman_ruangan` LEFT JOIN ruang_praktikum ON peminjaman_ruangan.id_ruangan = ruang_praktikum.id_ruangan WHERE ruang_praktikum.status_peminjaman = 'Dipinjam' ORDER BY `tanggal_peminjaman` ASC"
-            params = None
-            rooms = read_data(query, params)
-        
-            query = "SELECT peminjaman_alat.id_alat, peminjaman_alat.tanggal_peminjaman, \
-                peminjaman_alat.tanggal_pengembalian, peminjaman_alat.id_peminjam, \
-                alat_praktikum.nama, alat_praktikum.spesifikasi_alat, alat_praktikum.status_peminjaman \
-                FROM `peminjaman_alat` LEFT JOIN alat_praktikum ON peminjaman_alat.id_alat = alat_praktikum.id_alat WHERE alat_praktikum.status_peminjaman = 'Dipinjam' ORDER BY `tanggal_peminjaman` ASC"
-            params = None
-            tools = read_data(query, params)
-        
-            query = "SELECT peminjaman_arsip.id_arsip, peminjaman_arsip.tanggal_peminjaman, \
-                peminjaman_arsip.tanggal_pengembalian, peminjaman_arsip.id_peminjam, \
-                arsip_ta.topik_arsip, arsip_ta.penulis_arsip, arsip_ta.status_peminjaman \
-                FROM `peminjaman_arsip` LEFT JOIN arsip_ta ON peminjaman_arsip.id_arsip = arsip_ta.id_arsip WHERE arsip_ta.status_peminjaman = 'Dipinjam' ORDER BY `tanggal_peminjaman` ASC"
-            params = None
-            archives = read_data(query, params)
-
-            return render_template('peminjaman.html', rooms=rooms, tools=tools, archives=archives)
-        # return error code 403 if user is not a admin
-        return abort(403)
-    return abort(401)
-
-@app.route('/pengembalian/<entity>/<id>', methods=['GET'])
-def pengembalian(entity, id):
-    if 'user_id' in session:
-        if session['role'] == 'Admin':
-            if entity == "ruangan":
-                query = "UPDATE `ruang_praktikum` SET `status_peminjaman` = %s WHERE `id_ruangan` = %s"
-                params = ("Tersedia", id)
-                write_data(query, params)
-
-            elif entity == "alat":
-                query = "UPDATE `alat_praktikum` SET `status_peminjaman` = %s WHERE `id_alat` = %s"
-                params = ("Tersedia", id)
-                write_data(query, params)
-
-            elif entity == "arsip":
-                query = "UPDATE `arsip_ta` SET `status_peminjaman` = %s WHERE `id_arsip` = %s"
-                params = ("Tersedia", id)
-                write_data(query, params)
-
-            return redirect(url_for('peminjaman'))
-        # return error code 403 if user is not a admin
-        return abort(403)
-    return abort(401)
 # @app.route('/base', methods=['GET'])
 # def base():
 #     return render_template('base.html')

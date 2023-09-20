@@ -28,6 +28,9 @@
         
         var element = document.getElementById("alat");
         element.classList.remove("active");
+        
+        var element = document.getElementById("peminjaman");
+        element.classList.remove("active");
     }
     
     function users_active(){
@@ -44,6 +47,9 @@
         element.classList.remove("active");
         
         var element = document.getElementById("alat");
+        element.classList.remove("active");
+        
+        var element = document.getElementById("peminjaman");
         element.classList.remove("active");
     }
 
@@ -62,6 +68,9 @@
         
         var element = document.getElementById("alat");
         element.classList.remove("active");
+        
+        var element = document.getElementById("peminjaman");
+        element.classList.remove("active");
     }
 
     function arsip_active(){
@@ -79,6 +88,9 @@
         
         var element = document.getElementById("alat");
         element.classList.remove("active");
+        
+        var element = document.getElementById("peminjaman");
+        element.classList.remove("active");
     }
 
     function alat_active(){
@@ -95,6 +107,29 @@
         element.classList.remove("active");
         
         var element = document.getElementById("alat");
+        element.classList.add("active");
+        
+        var element = document.getElementById("peminjaman");
+        element.classList.remove("active");
+    }
+
+    function peminjaman_active(){
+        var element = document.getElementById("dashboard");
+        element.classList.remove("active");
+    
+        var element = document.getElementById("users");
+        element.classList.remove("active");
+    
+        var element = document.getElementById("ruangan");
+        element.classList.remove("active");
+
+        var element = document.getElementById("arsip");
+        element.classList.remove("active");
+        
+        var element = document.getElementById("alat");
+        element.classList.remove("active");
+        
+        var element = document.getElementById("peminjaman");
         element.classList.add("active");
     }
     
@@ -169,6 +204,12 @@ body{position: relative;margin: var(--header-height) 0 0 0;padding: 0 1rem;font-
                         <a href="{{ url_for('alat') }}" class="nav_link" id="alat" onclick="alat_active()"> 
                             <i class="bx bx-bar-chart-alt-2 nav_icon" title="Alat"></i> 
                             <span class="nav_name">Alat Praktikum</span> 
+                        </a> 
+                        {% endif %}
+                        {% if session['role'] == 'Admin' %}
+                        <a href="{{ url_for('peminjaman') }}" class="nav_link" id="peminjaman" onclick="peminjaman_active()"> 
+                            <i class="bx bx-bar-chart-alt-2 nav_icon" title="Peminjaman"></i> 
+                            <span class="nav_name">Daftar Peminjaman</span> 
                         </a> 
                         {% endif %}
                     {% endif %}
