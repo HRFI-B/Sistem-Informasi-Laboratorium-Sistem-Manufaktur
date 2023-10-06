@@ -31,6 +31,9 @@
         
         var element = document.getElementById("peminjaman");
         element.classList.remove("active");
+        
+        var element = document.getElementById("pengajuan");
+        element.classList.remove("active");
     }
     
     function users_active(){
@@ -50,6 +53,9 @@
         element.classList.remove("active");
         
         var element = document.getElementById("peminjaman");
+        element.classList.remove("active");
+        
+        var element = document.getElementById("pengajuan");
         element.classList.remove("active");
     }
 
@@ -71,6 +77,9 @@
         
         var element = document.getElementById("peminjaman");
         element.classList.remove("active");
+        
+        var element = document.getElementById("pengajuan");
+        element.classList.remove("active");
     }
 
     function arsip_active(){
@@ -90,6 +99,9 @@
         element.classList.remove("active");
         
         var element = document.getElementById("peminjaman");
+        element.classList.remove("active");
+        
+        var element = document.getElementById("pengajuan");
         element.classList.remove("active");
     }
 
@@ -111,6 +123,9 @@
         
         var element = document.getElementById("peminjaman");
         element.classList.remove("active");
+        
+        var element = document.getElementById("pengajuan");
+        element.classList.remove("active");
     }
 
     function peminjaman_active(){
@@ -130,6 +145,32 @@
         element.classList.remove("active");
         
         var element = document.getElementById("peminjaman");
+        element.classList.add("active");
+        
+        var element = document.getElementById("pengajuan");
+        element.classList.remove("active");
+    }
+
+    function pengajuan_active(){
+        var element = document.getElementById("dashboard");
+        element.classList.remove("active");
+    
+        var element = document.getElementById("users");
+        element.classList.remove("active");
+    
+        var element = document.getElementById("ruangan");
+        element.classList.remove("active");
+
+        var element = document.getElementById("arsip");
+        element.classList.remove("active");
+        
+        var element = document.getElementById("alat");
+        element.classList.remove("active");
+        
+        var element = document.getElementById("peminjaman");
+        element.classList.remove("active");
+        
+        var element = document.getElementById("pengajuan");
         element.classList.add("active");
     }
     
@@ -188,19 +229,19 @@ body{position: relative;margin: var(--header-height) 0 0 0;padding: 0 1rem;font-
                             <span class="nav_name">Users</span> 
                         </a>
                         {% endif %}
-                        {% if session['role'] == 'Admin' %}
+                        {% if session['role'] in ['Admin','Mahasiswa'] %}
                         <a href="{{ url_for('ruangan') }}" class="nav_link" id="ruangan" onclick="ruangan_active()"> 
                             <i class="bx bx-bar-chart-alt-2 nav_icon" title="Ruangan"></i> 
                             <span class="nav_name">Ruangan Praktikum</span> 
                         </a> 
                         {% endif %}
-                        {% if session['role'] == 'Admin' %}
+                        {% if session['role'] in ['Admin','Mahasiswa'] %}
                         <a href="{{ url_for('arsip') }}" class="nav_link" id="arsip" onclick="arsip_active()"> 
                             <i class="bx bx-bar-chart-alt-2 nav_icon" title="Arsip"></i> 
                             <span class="nav_name">Arsip Tugas Akhir</span> 
                         </a> 
                         {% endif %}
-                        {% if session['role'] == 'Admin' %}
+                        {% if session['role'] in ['Admin','Mahasiswa'] %}
                         <a href="{{ url_for('alat') }}" class="nav_link" id="alat" onclick="alat_active()"> 
                             <i class="bx bx-bar-chart-alt-2 nav_icon" title="Alat"></i> 
                             <span class="nav_name">Alat Praktikum</span> 
@@ -210,6 +251,12 @@ body{position: relative;margin: var(--header-height) 0 0 0;padding: 0 1rem;font-
                         <a href="{{ url_for('peminjaman') }}" class="nav_link" id="peminjaman" onclick="peminjaman_active()"> 
                             <i class="bx bx-bar-chart-alt-2 nav_icon" title="Peminjaman"></i> 
                             <span class="nav_name">Daftar Peminjaman</span> 
+                        </a> 
+                        {% endif %}
+                        {% if session['role'] == 'Admin' %}
+                        <a href="{{ url_for('pengajuan') }}" class="nav_link" id="pengajuan" onclick="pengajuan_active()"> 
+                            <i class="bx bx-bar-chart-alt-2 nav_icon" title="pengajuan"></i> 
+                            <span class="nav_name">Daftar Pengajuan Peminjaman</span> 
                         </a> 
                         {% endif %}
                     {% endif %}

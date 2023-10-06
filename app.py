@@ -279,7 +279,7 @@ def delete_user(user_id):
 def ruangan():
     # mysql = connect_db()
     if 'user_id' in session:
-        if session['role'] == 'Admin':
+        if session['role'] in ['Admin', 'Mahasiswa']:
             query = "SELECT * FROM `ruang_praktikum` ORDER BY `id_ruangan` ASC"
             params = None
             rooms = read_data(query, params)
@@ -389,7 +389,7 @@ def delete_ruangan(id_ruangan):
 def alat():
     # mysql = connect_db()
     if 'user_id' in session:
-        if session['role'] == 'Admin':
+        if session['role'] in ['Admin','Mahasiswa']:
             query = "SELECT * FROM `alat_praktikum` ORDER BY `id_alat` ASC"
             params = None
             tools = read_data(query, params)
@@ -503,7 +503,7 @@ def delete_alat(id_alat):
 def arsip():
     # mysql = connect_db()
     if 'user_id' in session:
-        if session['role'] == 'Admin':
+        if session['role'] in ['Admin','Mahasiswa']:
             query = "SELECT * FROM `arsip_ta` ORDER BY `id_arsip` ASC"
             params = None
             archives = read_data(query, params)
@@ -646,7 +646,29 @@ def peminjaman():
             params = None
             archives = read_data(query, params)
 
-            return render_template('peminjaman.html', rooms=rooms, tools=tools, archives=archives)
+            return render_template('peminjamanAdmin.html', rooms=rooms, tools=tools, archives=archives)
+        elif session['role'] == 'Mahasiswa':
+            # query = "SELECT peminjaman_ruangan.id_ruangan, peminjaman_ruangan.tanggal_peminjaman, \
+            #     peminjaman_ruangan.waktu_peminjaman, peminjaman_ruangan.id_peminjam, peminjaman_ruangan.durasi_peminjaman, \
+            #     ruang_praktikum.nama, ruang_praktikum.lokasi, ruang_praktikum.status_peminjaman \
+            #     FROM `peminjaman_ruangan` LEFT JOIN ruang_praktikum ON peminjaman_ruangan.id_ruangan = ruang_praktikum.id_ruangan WHERE ruang_praktikum.status_peminjaman = 'Dipinjam' ORDER BY `tanggal_peminjaman` ASC"
+            # params = None
+            # rooms = read_data(query, params)
+        
+            # query = "SELECT peminjaman_alat.id_alat, peminjaman_alat.tanggal_peminjaman, \
+            #     peminjaman_alat.tanggal_pengembalian, peminjaman_alat.id_peminjam, \
+            #     alat_praktikum.nama, alat_praktikum.spesifikasi_alat, alat_praktikum.status_peminjaman \
+            #     FROM `peminjaman_alat` LEFT JOIN alat_praktikum ON peminjaman_alat.id_alat = alat_praktikum.id_alat WHERE alat_praktikum.status_peminjaman = 'Dipinjam' ORDER BY `tanggal_peminjaman` ASC"
+            # params = None
+            # tools = read_data(query, params)
+        
+            # query = "SELECT peminjaman_arsip.id_arsip, peminjaman_arsip.tanggal_peminjaman, \
+            #     peminjaman_arsip.tanggal_pengembalian, peminjaman_arsip.id_peminjam, \
+            #     arsip_ta.topik_arsip, arsip_ta.penulis_arsip, arsip_ta.status_peminjaman \
+            #     FROM `peminjaman_arsip` LEFT JOIN arsip_ta ON peminjaman_arsip.id_arsip = arsip_ta.id_arsip WHERE arsip_ta.status_peminjaman = 'Dipinjam' ORDER BY `tanggal_peminjaman` ASC"
+            # params = None
+            # archives = read_data(query, params)
+            return render_template('peminjamanMhs.html', rooms=rooms, tools=tools, archives=archives)
         # return error code 403 if user is not a admin
         return abort(403)
     return abort(401)
@@ -660,9 +682,17 @@ def pengembalian(entity, id):
                 params = ("Tersedia", id)
                 write_data(query, params)
 
+                query = "DELETE FROM `peminjaman_ruangan` WHERE `id_ruangan` = %s"
+                params = (id,)
+                write_data(query, params)
+
             elif entity == "alat":
                 query = "UPDATE `alat_praktikum` SET `status_peminjaman` = %s WHERE `id_alat` = %s"
                 params = ("Tersedia", id)
+                write_data(query, params)
+
+                query = "DELETE FROM `peminjaman_alat` WHERE `id_alat` = %s"
+                params = (id,)
                 write_data(query, params)
 
             elif entity == "arsip":
@@ -670,74 +700,149 @@ def pengembalian(entity, id):
                 params = ("Tersedia", id)
                 write_data(query, params)
 
+                query = "DELETE FROM `peminjaman_arsip` WHERE `id_arsip` = %s"
+                params = (id,)
+                write_data(query, params)
+
             return redirect(url_for('peminjaman'))
         # return error code 403 if user is not a admin
         return abort(403)
     return abort(401)
+
+@app.route('/peminjaman_arsip/<id_arsip>', methods=['GET'])
+def peminjaman_arsip(id_arsip):
+    if 'user_id' in session:
+        if session['role'] == 'Mahasiswa':
+            query = "SELECT `status_peminjaman` FROM `arsip_ta` WHERE `id_arsip` = %s"
+            params = (id_arsip,)
+            status_arsip = read_data(query, params, "fetchone")
+            if status_arsip['status_peminjaman'] == "Tersedia":
+                today = datetime.today()
+
+                tanggal_pengajuan = today
+                tanggal_peminjaman = today.strftime('%Y-%m-%d')
+                waktu_peminjaman = None
+                tanggal_pengembalian = datetime.now() + timedelta(days=7)
+                peminjam = session['user_id']
+
+                query = "INSERT INTO `pengajuan_peminjaman` (`tanggal_pengajuan`, `barang`, `id_barang`, `tanggal_peminjaman`, `waktu_peminjaman`,`tanggal_pengembalian`,`peminjam`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                params = (tanggal_pengajuan, "arsip_ta", id_arsip, tanggal_peminjaman, waktu_peminjaman, tanggal_pengembalian, peminjam)
+                write_data(query, params)
+
+                query = "UPDATE `arsip_ta` SET `status_peminjaman` = %s WHERE `id_arsip` = %s"
+                params = ("Tidak Tersedia", id_arsip)
+                write_data(query, params)
+                return redirect(url_for('arsip'))
+            else:
+                return redirect(url_for('arsip'))
+        return abort(403)
+    return abort(401)
+
+@app.route('/pengajuan', methods=['GET'])
+def pengajuan():
+    if 'user_id' in session:
+        if session['role'] == 'Admin':
+            query = "SELECT * FROM `pengajuan_peminjaman` ORDER BY `tanggal_pengajuan` ASC"
+            params = None
+            entities = read_data(query, params)
+            
+            return render_template('pengajuan.html', entities=entities)
+        return abort(403)
+    return abort(401)
+
+@app.route('/aksi_pengajuan/<aksi>/<id>', methods=['GET'])
+def aksi_pengajuan(aksi,id):
+    if 'user_id' in session:
+        if session['role'] == 'Admin':
+            if aksi == "terima":
+                query = "SELECT * FROM `pengajuan_peminjaman` WHERE `id` = %s"
+                params = (id,)
+                entity = read_data(query, params, "fetchone")
+
+                if entity['barang'] == "arsip_ta":
+                    query = "DELETE FROM `pengajuan_peminjaman` WHERE `id` = %s"
+                    params = (id,)
+                    write_data(query, params)
+
+                    query = "INSERT INTO `peminjaman_arsip` (`id_arsip`, `tanggal_peminjaman`, `tanggal_pengembalian`, `id_peminjam`) VALUES (%s, %s, %s, %s)"
+                    params = (entity['id_barang'], entity['tanggal_peminjaman'], entity['tanggal_pengembalian'], entity['peminjam'])
+                    write_data(query, params)
+
+                    query = "UPDATE `arsip_ta` SET `status_peminjaman` = %s WHERE `id_arsip` = %s"
+                    params = ("Dipinjam", entity['id_barang'])
+                    write_data(query, params)
+            
+            elif aksi == "tolak":
+                return redirect(url_for('pengajuan'))
+            
+            return redirect(url_for('pengajuan'))
+        return abort(403)
+    return abort(401)
+
 # @app.route('/base', methods=['GET'])
 # def base():
 #     return render_template('base.html')
 
-# # Error Handling Section
-# @app.errorhandler(400)
-# def bad_request(error):
-#     error = "400 - Bad Request"
-#     return render_template('errorPage.html', error=error), 400
+# Error Handling Section
+@app.errorhandler(400)
+def bad_request(error):
+    error = "400 - Bad Request"
+    return render_template('errorPage.html', error=error), 400
 
-# @app.errorhandler(401)
-# def unauthorized(error):
-#     error = "401 - Unauthorized Access"
-#     return render_template('errorPage.html', error=error), 401
+@app.errorhandler(401)
+def unauthorized(error):
+    error = "401 - Unauthorized Access"
+    return render_template('errorPage.html', error=error), 401
 
-# @app.errorhandler(403)
-# def forbidden(error):
-#     error = "403 - Forbidden Access"
-#     return render_template('errorPage.html', error=error), 403
+@app.errorhandler(403)
+def forbidden(error):
+    error = "403 - Forbidden Access"
+    return render_template('errorPage.html', error=error), 403
 
-# @app.errorhandler(404)
-# def page_not_found(error):
-#     error = "404 - Page Not Found"
-#     return render_template('errorPage.html', error=error), 404
+@app.errorhandler(404)
+def page_not_found(error):
+    error = "404 - Page Not Found"
+    return render_template('errorPage.html', error=error), 404
 
-# @app.errorhandler(405)
-# def method_not_allowed(error):
-#     error = "405 - Method Not Allowed"
-#     return render_template('errorPage.html', error=error), 405
+@app.errorhandler(405)
+def method_not_allowed(error):
+    error = "405 - Method Not Allowed"
+    return render_template('errorPage.html', error=error), 405
 
-# @app.errorhandler(406)
-# def not_acceptable(error):
-#     error = "406 - Not Acceptable"
-#     return render_template('errorPage.html', error=error), 406
+@app.errorhandler(406)
+def not_acceptable(error):
+    error = "406 - Not Acceptable"
+    return render_template('errorPage.html', error=error), 406
 
-# @app.errorhandler(408)
-# def request_timeout(error):
-#     error = "408 - Request Timeout"
-#     return render_template('errorPage.html', error=error), 408
+@app.errorhandler(408)
+def request_timeout(error):
+    error = "408 - Request Timeout"
+    return render_template('errorPage.html', error=error), 408
 
-# @app.errorhandler(409)
-# def conflict(error):
-#     error = "409 - Conflict"
-#     return render_template('errorPage.html', error=error), 409
+@app.errorhandler(409)
+def conflict(error):
+    error = "409 - Conflict"
+    return render_template('errorPage.html', error=error), 409
 
-# @app.errorhandler(500)
-# def internal_error(error):
-#     error = "500 - Internal Server Error"
-#     return render_template('errorPage.html', error=error), 500
+@app.errorhandler(500)
+def internal_error(error):
+    error = "500 - Internal Server Error"
+    return render_template('errorPage.html', error=error), 500
 
-# @app.errorhandler(501)
-# def not_implemented(error):
-#     error = "501 - Not Implemented"
-#     return render_template('errorPage.html', error=error), 501
+@app.errorhandler(501)
+def not_implemented(error):
+    error = "501 - Not Implemented"
+    return render_template('errorPage.html', error=error), 501
 
-# @app.errorhandler(502)
-# def bad_gateway(error):
-#     error = "502 - Bad Gateway"
-#     return render_template('errorPage.html', error=error), 502
+@app.errorhandler(502)
+def bad_gateway(error):
+    error = "502 - Bad Gateway"
+    return render_template('errorPage.html', error=error), 502
 
-# @app.errorhandler(503)
-# def service_unavailable(error):
-#     error = "503 - Service Unavailable"
-#     return render_template('errorPage.html', error=error), 503
+@app.errorhandler(503)
+def service_unavailable(error):
+    error = "503 - Service Unavailable"
+    return render_template('errorPage.html', error=error), 503
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
