@@ -116,8 +116,9 @@
                     {% endif %}
                     {% if session["role"] == "Mahasiswa" %}
                       <td>
-                        <a class="btn btn-primary btn-sm"  href="{{ url_for('edit_alat',id_alat=tool.id_alat)}}">
-                            <i class="fs-6 bi-pencil"></i>
+                        <a class="btn btn-primary btn-sm"  href="{{ url_for('peminjaman_alat',id_alat=tool.id_alat)}}" title="Ajukan Peminjaman">
+                          <i class="bi bi-journal-plus"></i>
+                          Pinjam
                         </a>
                       </td>
                     {% endif %}

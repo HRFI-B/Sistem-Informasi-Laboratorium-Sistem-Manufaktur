@@ -116,8 +116,9 @@
                         </a>
                       {% endif %}
                       {% if session['role'] == "Mahasiswa" %}
-                        <a class="btn btn-primary btn-sm"  href="{{ url_for('peminjaman_arsip',id_arsip=archive.id_arsip)}}">
-                          <i class="fs-6 bi-pencil"></i>
+                        <a class="btn btn-primary btn-sm"  href="{{ url_for('peminjaman_arsip',id_arsip=archive.id_arsip)}}" title="Ajukan Peminjaman">
+                          <i class="bi bi-journal-plus"></i>
+                          Pinjam
                         </a>
                       {% endif %}
                     </td>

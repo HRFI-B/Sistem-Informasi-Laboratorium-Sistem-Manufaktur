@@ -62,9 +62,6 @@
     <div class="card">
         <div class="card-body small">
           <div id="toolbar">
-            <a class="btn btn-danger" href="{{ url_for('add_arsip')}}">
-              <i class="fs-5 bi-plus"></i>Tambah Arsip
-            </a>
           </div >
           <table class="table-striped table-responsive-sm small"
           data-toggle="table"
@@ -116,14 +113,17 @@
                         -
                       </td>
                     {% else %}
-                      <td> {{ entity.waktu_peminjaman }} </td>
+                    <td>{{ entity.waktu_peminjaman }} Jam</td>
                     {% endif %}
                     <td>{{ entity.tanggal_pengembalian }}</td>
                     <td>
-                      <a class="btn btn-primary btn-sm"  href="{{ url_for('aksi_pengajuan', aksi='terima', id=entity.id)}}">
-                        <i class="fs-6 bi-pencil"></i>
-                      <a class="btn btn-danger btn-sm" id="delete" href="{{ url_for('aksi_pengajuan', aksi='tolak', id=entity.id)}}">
-                          <i class="fs-6 bi-trash"></i>
+                      <a class="btn btn-primary btn-sm"  href="{{ url_for('aksi_pengajuan', aksi='terima', id=entity.id)}}" title="Terima Peminajaman">
+                        <i class="bi bi-check-square"></i>
+                        Terima
+                      </a>
+                      <a class="btn btn-danger btn-sm" id="delete" href="{{ url_for('aksi_pengajuan', aksi='tolak', id=entity.id)}}" title="Tolak Peminjaman">
+                        <i class="bi bi-x-square"></i>
+                          Tolak
                       </a>
                     </td>
                 </tr>

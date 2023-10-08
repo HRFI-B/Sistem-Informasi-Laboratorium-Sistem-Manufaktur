@@ -85,7 +85,7 @@
             <th scope="col" data-field="waktu_peminjaman">Waktu Peminjaman</th>
             <th scope="col" data-field="id_peminjam">ID Peminjam</th>
             <th scope="col" data-field="status_peminjaman">Status Peminjaman</th>
-            <th scope="col" data-field="aksi">Aksi</th>
+            <!-- <th scope="col" data-field="aksi">Aksi</th> -->
           </tr>
         </thead>
         <div id="log-table">
@@ -108,11 +108,12 @@
                       {{ room.status_peminjaman }}
                       </label>
                     {% endif %}</td>
-                    <td>
-                        <a class="btn btn-sm" id="delete" style="background-color: #5D9C59" color="#FFFFFF"; href="{{ url_for('pengembalian',entity='ruangan',id=room.id_ruangan)}}">
-                            <i class="fs-6 bi-trash"></i>
+                    <!-- <td>
+                        <a class="btn btn-primary btn-sm" id="delete" href="{{ url_for('pengembalian',entity='ruangan',id=room.id_ruangan)}}" title="Pengembalian Ruangan">
+                          <i class="bi bi-arrow-down-square"></i>
+                          Pengembalian
                         </a>
-                    </td>
+                    </td> -->
                 </tr>
                 {% endfor%}
               {% else %}
@@ -153,7 +154,7 @@
             <th scope="col" data-field="tanggal_pengembalian">Tanggal Pengembalian</th>
             <th scope="col" data-field="id_peminjam">Id Peminjam</th>
             <th scope="col" data-field="status_peminjaman">Status Peminjaman</th>
-            <th scope="col" data-field="aksi">Aksi</th>
+            <!-- <th scope="col" data-field="aksi">Aksi</th> -->
           </tr>
         </thead>
         <div id="log-table">
@@ -177,9 +178,10 @@
                       </label>
                     {% endif %}</td>
                     <td>
-                        <a class="btn btn-sm" id="delete" style="background-color: #5D9C59" color="#FFFFFF"; href="{{ url_for('pengembalian',entity='arsip',id=archive.id_arsip)}}">
-                            <i class="fs-6 bi-trash"></i>
-                        </a>
+                        <!-- <a class="btn btn-primary btn-sm" id="delete" href="{{ url_for('pengembalian',entity='arsip',id=archive.id_arsip)}}" title="Pengembalian Ruangan">
+                          <i class="bi bi-arrow-down-square"></i>
+                          Pengembalian
+                        </a> -->
                     </td>
                 </tr>
                 {% endfor%}
@@ -221,7 +223,7 @@
             <th scope="col" data-field="tanggal_pengembalian">Tanggal Pengembalian</th>
             <th scope="col" data-field="id_peminjam">ID Peminjam</th>
             <th scope="col" data-field="status_peminjaman">Status Peminjaman</th>
-            <th scope="col" data-field="aksi">Aksi</th>
+            <!-- <th scope="col" data-field="aksi">Aksi</th> -->
           </tr>
         </thead>
         <div id="log-table">
@@ -247,9 +249,10 @@
                         </label>
                         {% endif %}</td>
                         <td>
-                            <a class="btn btn-sm" id="delete" style="background-color: #5D9C59" color="#FFFFFF"; href="{{ url_for('pengembalian',entity='alat',id=tool.id_alat)}}">
-                                <i class="fs-6 bi-trash"></i>
-                            </a>
+                            <!-- <a class="btn btn-primary btn-sm" id="delete" href="{{ url_for('pengembalian',entity='alat',id=tool.id_alat)}}" title="Pengembalian Ruangan">
+                              <i class="bi bi-arrow-down-square"></i>
+                              Pengembalian
+                            </a> -->
                         </td>
                     {% endif %}
                     

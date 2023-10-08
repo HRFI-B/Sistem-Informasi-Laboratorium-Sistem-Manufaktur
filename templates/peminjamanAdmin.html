@@ -97,7 +97,12 @@
                     <td>{{ room.nama }}</td>
                     <td>{{ room.id_ruangan }}</td>
                     <td>{{ room.tanggal_peminjaman }}</td>
-                    <td>{{ room.waktu_peminjaman }}</td>
+                    
+                    {% if room.waktu_peminjaman % 1 == 0%}
+                      <td>{{ room.waktu_peminjaman }} Jam</td>
+                    {% else %}
+                      <td>-</td>
+                    {% endif %}
                     <td>{{ room.id_peminjam }}</td>
                     <td>{% if room.status_peminjaman == "Tersedia" %}
                       <label class="btn btn-sm" style="background-color: #5D9C59; color: #FFFFFF">
@@ -109,8 +114,9 @@
                       </label>
                     {% endif %}</td>
                     <td>
-                        <a class="btn btn-sm" id="delete" style="background-color: #5D9C59" color="#FFFFFF"; href="{{ url_for('pengembalian',entity='ruangan',id=room.id_ruangan)}}">
-                            <i class="fs-6 bi-trash"></i>
+                        <a class="btn btn-primary btn-sm" id="delete" ; href="{{ url_for('pengembalian',entity='ruangan',id=room.id_ruangan)}}" title="Pengembalian Ruangan">
+                          <i class="bi bi-arrow-down-square"></i>
+                          Pengembalian
                         </a>
                     </td>
                 </tr>
@@ -177,8 +183,9 @@
                       </label>
                     {% endif %}</td>
                     <td>
-                        <a class="btn btn-sm" id="delete" style="background-color: #5D9C59" color="#FFFFFF"; href="{{ url_for('pengembalian',entity='arsip',id=archive.id_arsip)}}">
-                            <i class="fs-6 bi-trash"></i>
+                        <a class="btn btn-primary btn-sm" ; href="{{ url_for('pengembalian',entity='arsip',id=archive.id_arsip)}}" title="Pengembalian Arsip">
+                          <i class="bi bi-arrow-down-square"></i>
+                          Pengembalian
                         </a>
                     </td>
                 </tr>
@@ -247,8 +254,9 @@
                         </label>
                         {% endif %}</td>
                         <td>
-                            <a class="btn btn-sm" id="delete" style="background-color: #5D9C59" color="#FFFFFF"; href="{{ url_for('pengembalian',entity='alat',id=tool.id_alat)}}">
-                                <i class="fs-6 bi-trash"></i>
+                            <a class="btn btn-primary btn-sm"; href="{{ url_for('pengembalian',entity='alat',id=tool.id_alat)}}" title="Pengembalian Alat">
+                              <i class="bi bi-arrow-down-square"></i>
+                              Pengembalian
                             </a>
                         </td>
                     {% endif %}

@@ -311,7 +311,7 @@ def add_ruangan():
                 lokasi = request.form['lokasi']
 
                 query = "INSERT INTO `ruang_praktikum` (`nama`, `id_ruangan`, `lokasi`, `status_peminjaman`) VALUES (%s, %s, %s, %s)"
-                params = (nama, id_ruangan, lokasi, "Available")
+                params = (nama, id_ruangan, lokasi, "Tersedia")
                 write_data(query, params)
 
                 return redirect(url_for('ruangan'))
@@ -421,7 +421,7 @@ def add_alat():
                 spesifikasi_alat = request.form['spesifikasi_alat']
 
                 query = "INSERT INTO `alat_praktikum` (`nama`, `id_alat`, `spesifikasi_alat`, `status_peminjaman`) VALUES (%s, %s, %s, %s)"
-                params = (nama, id_alat, spesifikasi_alat, "Available")
+                params = (nama, id_alat, spesifikasi_alat, "Tersedia")
                 write_data(query, params)
 
                 return redirect(url_for('alat'))
@@ -536,7 +536,7 @@ def add_arsip():
                 penulis_arsip = request.form['penulis_arsip']
 
                 query = "INSERT INTO `arsip_ta` (`topik_arsip`, `id_arsip`, `tanggal_arsip`, `penulis_arsip`, `status_peminjaman`) VALUES (%s, %s, %s, %s, %s)"
-                params = (topik_arsip, id_arsip, tanggal_arsip, penulis_arsip, "Available")
+                params = (topik_arsip, id_arsip, tanggal_arsip, penulis_arsip, "Tersedia")
                 write_data(query, params)
 
                 return redirect(url_for('arsip'))
@@ -626,7 +626,7 @@ def peminjaman():
     if 'user_id' in session:
         if session['role'] == 'Admin':
             query = "SELECT peminjaman_ruangan.id_ruangan, peminjaman_ruangan.tanggal_peminjaman, \
-                peminjaman_ruangan.waktu_peminjaman, peminjaman_ruangan.id_peminjam, peminjaman_ruangan.durasi_peminjaman, \
+                peminjaman_ruangan.waktu_peminjaman, peminjaman_ruangan.id_peminjam, \
                 ruang_praktikum.nama, ruang_praktikum.lokasi, ruang_praktikum.status_peminjaman \
                 FROM `peminjaman_ruangan` LEFT JOIN ruang_praktikum ON peminjaman_ruangan.id_ruangan = ruang_praktikum.id_ruangan WHERE ruang_praktikum.status_peminjaman = 'Dipinjam' ORDER BY `tanggal_peminjaman` ASC"
             params = None
@@ -648,26 +648,27 @@ def peminjaman():
 
             return render_template('peminjamanAdmin.html', rooms=rooms, tools=tools, archives=archives)
         elif session['role'] == 'Mahasiswa':
-            # query = "SELECT peminjaman_ruangan.id_ruangan, peminjaman_ruangan.tanggal_peminjaman, \
-            #     peminjaman_ruangan.waktu_peminjaman, peminjaman_ruangan.id_peminjam, peminjaman_ruangan.durasi_peminjaman, \
-            #     ruang_praktikum.nama, ruang_praktikum.lokasi, ruang_praktikum.status_peminjaman \
-            #     FROM `peminjaman_ruangan` LEFT JOIN ruang_praktikum ON peminjaman_ruangan.id_ruangan = ruang_praktikum.id_ruangan WHERE ruang_praktikum.status_peminjaman = 'Dipinjam' ORDER BY `tanggal_peminjaman` ASC"
-            # params = None
-            # rooms = read_data(query, params)
+            query = "SELECT peminjaman_ruangan.id_ruangan, peminjaman_ruangan.tanggal_peminjaman, \
+                peminjaman_ruangan.waktu_peminjaman, peminjaman_ruangan.id_peminjam, \
+                ruang_praktikum.nama, ruang_praktikum.lokasi, ruang_praktikum.status_peminjaman \
+                FROM `peminjaman_ruangan` LEFT JOIN ruang_praktikum ON peminjaman_ruangan.id_ruangan = ruang_praktikum.id_ruangan WHERE ruang_praktikum.status_peminjaman = 'Dipinjam' AND peminjaman_ruangan.id_peminjam = %s ORDER BY `tanggal_peminjaman` ASC"
+            params = (session['user_id'],)
+            rooms = read_data(query, params)
         
-            # query = "SELECT peminjaman_alat.id_alat, peminjaman_alat.tanggal_peminjaman, \
-            #     peminjaman_alat.tanggal_pengembalian, peminjaman_alat.id_peminjam, \
-            #     alat_praktikum.nama, alat_praktikum.spesifikasi_alat, alat_praktikum.status_peminjaman \
-            #     FROM `peminjaman_alat` LEFT JOIN alat_praktikum ON peminjaman_alat.id_alat = alat_praktikum.id_alat WHERE alat_praktikum.status_peminjaman = 'Dipinjam' ORDER BY `tanggal_peminjaman` ASC"
-            # params = None
-            # tools = read_data(query, params)
+            query = "SELECT peminjaman_alat.id_alat, peminjaman_alat.tanggal_peminjaman, \
+                peminjaman_alat.tanggal_pengembalian, peminjaman_alat.id_peminjam, \
+                alat_praktikum.nama, alat_praktikum.spesifikasi_alat, alat_praktikum.status_peminjaman \
+                FROM `peminjaman_alat` LEFT JOIN alat_praktikum ON peminjaman_alat.id_alat = alat_praktikum.id_alat WHERE alat_praktikum.status_peminjaman = 'Dipinjam' AND peminjaman_alat.id_peminjam = %s ORDER BY `tanggal_peminjaman` ASC"
+            params = (session['user_id'],)
+            tools = read_data(query, params)
         
-            # query = "SELECT peminjaman_arsip.id_arsip, peminjaman_arsip.tanggal_peminjaman, \
-            #     peminjaman_arsip.tanggal_pengembalian, peminjaman_arsip.id_peminjam, \
-            #     arsip_ta.topik_arsip, arsip_ta.penulis_arsip, arsip_ta.status_peminjaman \
-            #     FROM `peminjaman_arsip` LEFT JOIN arsip_ta ON peminjaman_arsip.id_arsip = arsip_ta.id_arsip WHERE arsip_ta.status_peminjaman = 'Dipinjam' ORDER BY `tanggal_peminjaman` ASC"
-            # params = None
-            # archives = read_data(query, params)
+            query = "SELECT peminjaman_arsip.id_arsip, peminjaman_arsip.tanggal_peminjaman, \
+                peminjaman_arsip.tanggal_pengembalian, peminjaman_arsip.id_peminjam, \
+                arsip_ta.topik_arsip, arsip_ta.penulis_arsip, arsip_ta.status_peminjaman \
+                FROM `peminjaman_arsip` LEFT JOIN arsip_ta ON peminjaman_arsip.id_arsip = arsip_ta.id_arsip WHERE arsip_ta.status_peminjaman = 'Dipinjam' AND peminjaman_arsip.id_peminjam = %s ORDER BY `tanggal_peminjaman` ASC"
+            params = (session['user_id'],)
+            archives = read_data(query, params)
+
             return render_template('peminjamanMhs.html', rooms=rooms, tools=tools, archives=archives)
         # return error code 403 if user is not a admin
         return abort(403)
@@ -738,6 +739,65 @@ def peminjaman_arsip(id_arsip):
         return abort(403)
     return abort(401)
 
+@app.route('/peminjaman_alat/<id_alat>', methods=['GET'])
+def peminjaman_alat(id_alat):
+    if 'user_id' in session:
+        if session['role'] == 'Mahasiswa':
+            query = "SELECT `status_peminjaman` FROM `alat_praktikum` WHERE `id_alat` = %s"
+            params = (id_alat,)
+            status_alat = read_data(query, params, "fetchone")
+            if status_alat['status_peminjaman'] == "Tersedia":
+                today = datetime.today()
+
+                tanggal_pengajuan = today
+                tanggal_peminjaman = today.strftime('%Y-%m-%d')
+                waktu_peminjaman = None
+                tanggal_pengembalian = datetime.now() + timedelta(days=7)
+                peminjam = session['user_id']
+
+                query = "INSERT INTO `pengajuan_peminjaman` (`tanggal_pengajuan`, `barang`, `id_barang`, `tanggal_peminjaman`, `waktu_peminjaman`,`tanggal_pengembalian`,`peminjam`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                params = (tanggal_pengajuan, "alat", id_alat, tanggal_peminjaman, waktu_peminjaman, tanggal_pengembalian, peminjam)
+                write_data(query, params)
+
+                query = "UPDATE `alat_praktikum` SET `status_peminjaman` = %s WHERE `id_alat` = %s"
+                params = ("Tidak Tersedia", id_alat)
+                write_data(query, params)
+                return redirect(url_for('alat'))
+            else:
+                return redirect(url_for('alat'))
+        return abort(403)
+    return abort(401)
+
+@app.route('/peminjaman_ruangan/<id_ruangan>', methods=['GET'])
+def peminjaman_ruangan(id_ruangan):
+    if 'user_id' in session:
+        if session['role'] == 'Mahasiswa':
+            query = "SELECT `status_peminjaman` FROM `ruang_praktikum` WHERE `id_ruangan` = %s"
+            params = (id_ruangan,)
+            status_ruangan = read_data(query, params, "fetchone")
+
+            if status_ruangan['status_peminjaman'] == "Tersedia":
+                today = datetime.today()
+
+                tanggal_pengajuan = today
+                tanggal_peminjaman = today.strftime('%Y-%m-%d')
+                waktu_peminjaman = 2
+                tanggal_pengembalian = datetime.now() + timedelta(hours=waktu_peminjaman)
+                peminjam = session['user_id']
+
+                query = "INSERT INTO `pengajuan_peminjaman` (`tanggal_pengajuan`, `barang`, `id_barang`, `tanggal_peminjaman`, `waktu_peminjaman`,`tanggal_pengembalian`,`peminjam`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+                params = (tanggal_pengajuan, "ruangan", id_ruangan, tanggal_peminjaman, waktu_peminjaman, tanggal_pengembalian, peminjam)
+                write_data(query, params)
+
+                query = "UPDATE `ruang_praktikum` SET `status_peminjaman` = %s WHERE `id_ruangan` = %s"
+                params = ("Tidak Tersedia", id_ruangan)
+                write_data(query, params)
+                return redirect(url_for('ruangan'))
+            else:
+                return redirect(url_for('ruangan'))
+        return abort(403)
+    return abort(401)
+
 @app.route('/pengajuan', methods=['GET'])
 def pengajuan():
     if 'user_id' in session:
@@ -754,11 +814,11 @@ def pengajuan():
 def aksi_pengajuan(aksi,id):
     if 'user_id' in session:
         if session['role'] == 'Admin':
+            query = "SELECT * FROM `pengajuan_peminjaman` WHERE `id` = %s"
+            params = (id,)
+            entity = read_data(query, params, "fetchone")
+            
             if aksi == "terima":
-                query = "SELECT * FROM `pengajuan_peminjaman` WHERE `id` = %s"
-                params = (id,)
-                entity = read_data(query, params, "fetchone")
-
                 if entity['barang'] == "arsip_ta":
                     query = "DELETE FROM `pengajuan_peminjaman` WHERE `id` = %s"
                     params = (id,)
@@ -771,10 +831,62 @@ def aksi_pengajuan(aksi,id):
                     query = "UPDATE `arsip_ta` SET `status_peminjaman` = %s WHERE `id_arsip` = %s"
                     params = ("Dipinjam", entity['id_barang'])
                     write_data(query, params)
+                
+                elif entity['barang'] == "alat":
+                    query = "DELETE FROM `pengajuan_peminjaman` WHERE `id` = %s"
+                    params = (id,)
+                    write_data(query, params)
+
+                    query = "INSERT INTO `peminjaman_alat` (`id_alat`, `tanggal_peminjaman`, `tanggal_pengembalian`, `id_peminjam`) VALUES (%s, %s, %s, %s)"
+                    params = (entity['id_barang'], entity['tanggal_peminjaman'], entity['tanggal_pengembalian'], entity['peminjam'])
+                    write_data(query, params)
+
+                    query = "UPDATE `alat_praktikum` SET `status_peminjaman` = %s WHERE `id_alat` = %s"
+                    params = ("Dipinjam", entity['id_barang'])
+                    write_data(query, params)
+
+                elif entity['barang'] == "ruangan":
+                    query = "DELETE FROM `pengajuan_peminjaman` WHERE `id` = %s"
+                    params = (id,)
+                    write_data(query, params)
+
+                    query = "INSERT INTO `peminjaman_ruangan` (`id_ruangan`, `tanggal_peminjaman`,`waktu_peminjaman`, `id_peminjam`) VALUES (%s, %s, %s, %s)"
+                    params = (entity['id_barang'], entity['tanggal_peminjaman'], entity['waktu_peminjaman'], entity['peminjam'])
+                    write_data(query, params)
+
+                    query = "UPDATE `ruang_praktikum` SET `status_peminjaman` = %s WHERE `id_ruangan` = %s"
+                    params = ("Dipinjam", entity['id_barang'])
+                    write_data(query, params)
             
             elif aksi == "tolak":
+                if entity['barang'] == "arsip_ta":
+                    query = "DELETE FROM `pengajuan_peminjaman` WHERE `id` = %s"
+                    params = (id,)
+                    write_data(query, params)
+
+                    query = "UPDATE `arsip_ta` SET `status_peminjaman` = %s WHERE `id_arsip` = %s"
+                    params = ("Tersedia", entity['id_barang'])
+                    write_data(query, params)
+                
+                elif entity['barang'] == "alat":
+                    query = "DELETE FROM `pengajuan_peminjaman` WHERE `id` = %s"
+                    params = (id,)
+                    write_data(query, params)
+
+                    query = "UPDATE `alat_praktikum` SET `status_peminjaman` = %s WHERE `id_alat` = %s"
+                    params = ("Tersedia", entity['id_barang'])
+                    write_data(query, params)
+
+                elif entity['barang'] == "ruangan":
+                    query = "DELETE FROM `pengajuan_peminjaman` WHERE `id` = %s"
+                    params = (id,)
+                    write_data(query, params)
+
+                    query = "UPDATE `ruang_praktikum` SET `status_peminjaman` = %s WHERE `id_ruangan` = %s"
+                    params = ("Tersedia", entity['id_barang'])
+                    write_data(query, params)    
+
                 return redirect(url_for('pengajuan'))
-            
             return redirect(url_for('pengajuan'))
         return abort(403)
     return abort(401)
