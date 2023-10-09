@@ -177,12 +177,6 @@
                       {{ archive.status_peminjaman }}
                       </label>
                     {% endif %}</td>
-                    <td>
-                        <!-- <a class="btn btn-primary btn-sm" id="delete" href="{{ url_for('pengembalian',entity='arsip',id=archive.id_arsip)}}" title="Pengembalian Ruangan">
-                          <i class="bi bi-arrow-down-square"></i>
-                          Pengembalian
-                        </a> -->
-                    </td>
                 </tr>
                 {% endfor%}
               {% else %}
@@ -248,12 +242,6 @@
                         {{ tool.status_peminjaman }}
                         </label>
                         {% endif %}</td>
-                        <td>
-                            <!-- <a class="btn btn-primary btn-sm" id="delete" href="{{ url_for('pengembalian',entity='alat',id=tool.id_alat)}}" title="Pengembalian Ruangan">
-                              <i class="bi bi-arrow-down-square"></i>
-                              Pengembalian
-                            </a> -->
-                        </td>
                     {% endif %}
                     
                 </tr>
